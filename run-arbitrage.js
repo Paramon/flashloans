@@ -19,7 +19,7 @@ const AMOUNT_DAI_WEI = web3.utils.toWei((AMOUNT_ETH * RECENT_ETH_PRICE).toString
 web3.eth.subscribe('newBlockHeaders')
     .on('data', async block => {
         console.log("New block received. Block #", block.number);
-        
+        /* The above code is using the Kyber API to get the buy and sell rates for ETH/DAI. */
         const kyberResults = await Promise.all([
             kyber
               .methods
@@ -38,7 +38,13 @@ web3.eth.subscribe('newBlockHeaders')
               ) 
               .call()
         ]);
-        console.log(kyberResults);
+        // normalize Kyber rates
+        const kyberRates = {
+          buy: parseFloat(1 / (kyberResults[0].expectedRate / (10 ** 18))),
+          sell: parseFloat(kyberResults[1].expectedRate / (10 ** 18))
+        };
+        console.log('Kyber ETH/DAI');
+        console.log(kyberRates);
 
 
     }).on('error', error => {
