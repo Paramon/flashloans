@@ -38,13 +38,20 @@ web3.eth.subscribe('newBlockHeaders')
               ) 
               .call()
         ]);
-        // normalize Kyber rates
+        // Normalize Kyber rates
         const kyberRates = {
           buy: parseFloat(1 / (kyberResults[0].expectedRate / (10 ** 18))),
           sell: parseFloat(kyberResults[1].expectedRate / (10 ** 18))
         };
         console.log('Kyber ETH/DAI');
         console.log(kyberRates);
+
+        const uniswapResults = await Promise.all([
+          daiWeth.getOutputAmount(new TokenAmount(dai, AMOUNT_DAI_WEI)),
+          daiWeth.getOutputAmount(new TokenAmount(weth, AMOUNT_ETH_WEI))
+        ]);
+        console.log(uniswapResults);
+    
 
 
     }).on('error', error => {
